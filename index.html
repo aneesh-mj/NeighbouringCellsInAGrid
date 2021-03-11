@@ -21,10 +21,18 @@
 
         .filled {
             background-color: red;
+            display: flex;
+            align-items: center;
         }
 
         .filled.hover {
-            background-color: black;
+            background-color: green;
+        }
+
+        .filled span {
+            flex: 1;
+            text-align: center;
+            pointer-events: none;
         }
 
         #container,
@@ -55,6 +63,9 @@
                 cell.classList.add('cell');
                 if (this.value) {
                     cell.classList.add('filled');
+                    const numContainer = document.createElement("span");
+                    this.numContainer = numContainer;
+                    cell.appendChild(numContainer);
                 }
                 this.domNode = cell;
                 return this;
@@ -119,9 +130,16 @@
                 return objMap;
             }
 
+            showCount = (cell, count) => {
+                this.container.querySelectorAll('span').forEach(s => s.style.display = 'none');
+                const span = cell.querySelector('span');
+                span.innerHTML = count;
+                span.style.display = "inline";
+            }
+
             attachEvents() {
 
-                let connectedCells;
+                let connectedCells = [];
 
                 this.container.addEventListener("mouseover", (e) => {
                     console.log(e.target);
@@ -144,7 +162,14 @@
                             c.domNode.classList.remove("hover");
                         });
                     }
-                })
+                });
+
+                this.container.addEventListener("click", (e) => {
+                    if (e.target.classList.contains("filled") && connectedCells.length) {
+                        this.showCount(e.target, connectedCells.length);
+                    }
+                });
+
 
             }
 
