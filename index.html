@@ -24,7 +24,7 @@
             <input type="color" id="hoverColor" name="hoverColor" value="#b5100a">
         </div>
 
-        <div class="row">
+        <div class="row footer">
             <button id="generateBtn">
                 Generate Grid
             </button>
@@ -35,58 +35,64 @@
 
     <script src="./Cell.js"></script>
     <script src="./Grid.js"></script>
+    <script src="./utils.js"></script>
 
     <script>
 
-        let gridSize = 5;
-        let bgcolor;
-        let hoverColor;
-        let grid;
+        (() => {
 
-        const slider = document.querySelector("#range");
-        const o = document.querySelector('output');
-        o.innerHTML = slider.value;
+            let gridSize = 5;
+            let bgcolor;
+            let hoverColor;
+            let grid;
 
-        const bgIp = document.querySelector("#bgcolor");
-        const hoverIp = document.querySelector("#hoverColor");
+            let gridArray = [
+                [0, 0, 0, 0, 1],
+                [1, 1, 0, 0, 0],
+                [1, 1, 0, 1, 1],
+                [0, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0],
+            ];
 
-        const generateBtn = document.querySelector("#generateBtn");
-
-
-
-        slider.addEventListener('input', () => {
+            const slider = document.querySelector("#range");
+            const o = document.querySelector('output');
             o.innerHTML = slider.value;
-            gridSize = slider.value;
-        }, false);
 
+            const bgIp = document.querySelector("#bgcolor");
+            const hoverIp = document.querySelector("#hoverColor");
 
-        bgIp.addEventListener("input", (e) => {
-            bgcolor = e.target.value;
-        }, false);
-
-
-        hoverIp.addEventListener("input", (e) => {
-            hoverColor = e.target.value;
-        }, false);
+            const generateBtn = document.querySelector("#generateBtn");
 
 
 
-        generateBtn.addEventListener("click", e => {
-            grid && grid.destroy();
-        })
+            slider.addEventListener('input', () => {
+                o.innerHTML = slider.value;
+                gridSize = Number(slider.value);
+            }, false);
+
+
+            bgIp.addEventListener("input", (e) => {
+                bgcolor = e.target.value;
+            }, false);
+
+
+            hoverIp.addEventListener("input", (e) => {
+                hoverColor = e.target.value;
+            }, false);
 
 
 
-        const gridArray = [
-            [0, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0],
-            [1, 1, 0, 1, 1],
-            [0, 0, 0, 0, 0],
-            [1, 1, 1, 0, 0],
-        ];
+            generateBtn.addEventListener("click", e => {
+                grid && grid.destroy();
+                gridArray = randomMultiArray(gridSize);
+                console.log(gridArray);
+                grid = new Grid(gridArray, container, bgcolor, hoverColor).render();
+            })
 
-        const container = document.querySelector("#container");
-        grid = new Grid(gridArray, container, bgcolor, hoverColor).render();
+            const container = document.querySelector("#container");
+            grid = new Grid(gridArray, container, bgcolor, hoverColor).render();
+
+        })();
 
 
     </script>
