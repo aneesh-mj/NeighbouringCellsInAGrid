@@ -9,28 +9,29 @@
 
 <body>
     <section id="avaGrid">
-        <div class="row">
-            <label for="range">Grid Size: </label>
-            <input id="range" type="range" value="5" min="4" max="10"> <output></output>
-        </div>
+        <section class="left">
+            <div class="row">
+                <label for="range">Grid Size: </label>
+                <input id="range" type="range" value="5" min="4" max="10"> <output></output>
+            </div>
 
-        <div class="row">
-            <label for="bgcolor">Background Color:</label>
-            <input type="color" id="bgcolor" name="bgcolor" value="#E2251E">
-        </div>
+            <div class="row">
+                <label for="bgcolor">Background Color:</label>
+                <input type="color" id="bgcolor" name="bgcolor" value="#E2251E">
+            </div>
 
-        <div class="row">
-            <label for="hoverColor">Hover Color</label>
-            <input type="color" id="hoverColor" name="hoverColor" value="#b5100a">
-        </div>
+            <div class="row">
+                <label for="hoverColor">Hover Color</label>
+                <input type="color" id="hoverColor" name="hoverColor" value="#b5100a">
+            </div>
 
-        <div class="row footer">
-            <button id="generateBtn">
-                Generate Grid
-            </button>
-        </div>
-
-        <div id="container"></div>
+            <div class="row footer">
+                <button id="generateBtn">
+                    Generate Grid
+                </button>
+            </div>
+        </section>
+        <section id="container" class="right"></section>
     </section>
 
     <script src="./Cell.js"></script>
@@ -56,14 +57,11 @@
 
             const slider = document.querySelector("#range");
             const o = document.querySelector('output');
-            o.innerHTML = slider.value;
-
             const bgIp = document.querySelector("#bgcolor");
             const hoverIp = document.querySelector("#hoverColor");
-
             const generateBtn = document.querySelector("#generateBtn");
 
-
+            o.innerHTML = slider.value;
 
             slider.addEventListener('input', () => {
                 o.innerHTML = slider.value;
@@ -71,12 +69,12 @@
             }, false);
 
 
-            bgIp.addEventListener("input", (e) => {
+            bgIp.addEventListener("input", e => {
                 bgcolor = e.target.value;
             }, false);
 
 
-            hoverIp.addEventListener("input", (e) => {
+            hoverIp.addEventListener("input", e => {
                 hoverColor = e.target.value;
             }, false);
 
@@ -85,7 +83,6 @@
             generateBtn.addEventListener("click", e => {
                 grid && grid.destroy();
                 gridArray = randomMultiArray(gridSize);
-                console.log(gridArray);
                 grid = new Grid(gridArray, container, bgcolor, hoverColor).render();
             })
 

@@ -72,7 +72,6 @@ class Grid {
 
 
     onMouseOver = e => {
-        console.log(e.target);
         if (e.target.classList.contains("filled")) {
             const id = e.target.id;
             this.currentConnectedCells = this.objMap[id].connectedCells;
@@ -135,8 +134,6 @@ class Grid {
         this.attachEvents();
 
         return this;
-
-        console.log(this.objMap)
     }
 
     destroy() {

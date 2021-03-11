@@ -1,6 +1,23 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
+    background-color: #F5F5F5;
+    color: #333;
+}
+
+#avaGrid {
+    display: flex;
+}
+
+.left {
+    padding-right: 50px;
+}
+
+.right {
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px rgb(0 0 0 / 8%);
+    background-color: #fff;
+    padding: 30px;
 }
 
 .grid {
@@ -38,9 +55,9 @@ body {
 }
 
 
-/**
+/*********
 FORM STYLES
-*/
+**********/
 
 #avaGrid {
     margin: 100px;
@@ -53,8 +70,22 @@ FORM STYLES
 
 #avaGrid .row.footer {
     justify-content: center;
+    margin-top: 70px;
 }
 
 #avaGrid label {
     min-width: 200px;
+}
+
+output {
+    padding: 0 20px;
+}
+
+button {
+    background: #0099cc;
+    color: #ffffff;
+    padding: 14px 24px;
+    border: 0 none;
+    letter-spacing: 1px;
+    border-radius: 24px;
 }
