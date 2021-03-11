@@ -5,11 +5,12 @@ class Grid {
         this.container = container;
         this.bgColor = bgColor;
         this.hoverColor = hoverColor;
+        this.currentConnectedCells = [];
     }
 
     setWidth() {
         const w = this.array[0].length;
-        this.container.style.width = `${w * 50 + w * 2}px`;
+        this.domNode.style.width = `${w * 50 + w * 2}px`;
 
     }
 
@@ -18,6 +19,9 @@ class Grid {
         const objMap = {};
         const grid = this.array;
 
+        this.domNode = document.createElement("div");
+        this.domNode.classList.add('grid');
+
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[i].length; j++) {
                 const id = `cell_${i}_${j}`;
@@ -25,7 +29,7 @@ class Grid {
 
                 if (!objMap[id]) {
                     objMap[id] = new Cell([i, j], value, this.bgColor, this.hoverColor).setDOMNode();
-                    this.container.appendChild(objMap[id].domNode);
+                    this.domNode.appendChild(objMap[id].domNode);
                 }
 
                 const topValue = grid[i - 1] && grid[i - 1][j];
@@ -52,6 +56,8 @@ class Grid {
             }
         }
 
+        this.container.appendChild(this.domNode);
+
         this.objMap = objMap;
 
         return objMap;
@@ -64,38 +70,42 @@ class Grid {
         span.style.display = "inline";
     }
 
+
+    onMouseOver = e => {
+        console.log(e.target);
+        if (e.target.classList.contains("filled")) {
+            const id = e.target.id;
+            this.currentConnectedCells = this.objMap[id].connectedCells;
+            if (!this.currentConnectedCells) {
+                this.setConnectedCells(id);
+            }
+            this.currentConnectedCells = this.objMap[id].connectedCells;
+            this.currentConnectedCells.map(c => {
+                c.domNode.classList.add("hover");
+                c.domNode.style.backgroundColor = this.hoverColor;
+            });
+        }
+    }
+
+    onMouseOut = e => {
+        if (this.currentConnectedCells.length) {
+            this.currentConnectedCells.map(c => {
+                c.domNode.classList.remove("hover");
+                c.domNode.style.backgroundColor = this.bgColor;
+            });
+        }
+    }
+
+    onClick = e => {
+        if (e.target.classList.contains("filled") && this.currentConnectedCells.length) {
+            this.showCount(e.target, this.currentConnectedCells.length);
+        }
+    }
+
     attachEvents() {
-
-        let connectedCells = [];
-
-        this.container.addEventListener("mouseover", (e) => {
-            console.log(e.target);
-            if (e.target.classList.contains("filled")) {
-                const id = e.target.id;
-                connectedCells = this.objMap[id].connectedCells;
-                if (!connectedCells) {
-                    this.setConnectedCells(id);
-                }
-                connectedCells = this.objMap[id].connectedCells;
-                connectedCells.map(c => {
-                    c.domNode.classList.add("hover");
-                });
-            }
-        });
-
-        this.container.addEventListener("mouseout", (e) => {
-            if (connectedCells.length) {
-                connectedCells.map(c => {
-                    c.domNode.classList.remove("hover");
-                });
-            }
-        });
-
-        this.container.addEventListener("click", (e) => {
-            if (e.target.classList.contains("filled") && connectedCells.length) {
-                this.showCount(e.target, connectedCells.length);
-            }
-        });
+        this.container.addEventListener("mouseover", this.onMouseOver);
+        this.container.addEventListener("mouseout", this.onMouseOut);
+        this.container.addEventListener("click", this.onClick);
 
 
     }
@@ -124,7 +134,21 @@ class Grid {
         this.setWidth();
         this.attachEvents();
 
+        return this;
+
         console.log(this.objMap)
     }
+
+    destroy() {
+
+        this.container.removeEventListener("mouseover", this.onMouseOver);
+        this.container.removeEventListener("mouseout", this.onMouseOut);
+        this.container.removeEventListener("click", this.onClick);
+
+        this.domNode.remove();
+
+
+    }
+
 
 }

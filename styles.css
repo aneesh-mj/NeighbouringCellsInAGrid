@@ -3,7 +3,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#container {
+.grid {
     /* border: 1px solid #ccc; */
     display: flex;
     flex-wrap: wrap;

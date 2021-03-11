@@ -25,7 +25,7 @@
         </div>
 
         <div class="row">
-            <button>
+            <button id="generateBtn">
                 Generate Grid
             </button>
         </div>
@@ -41,6 +41,7 @@
         let gridSize = 5;
         let bgcolor;
         let hoverColor;
+        let grid;
 
         const slider = document.querySelector("#range");
         const o = document.querySelector('output');
@@ -48,6 +49,8 @@
 
         const bgIp = document.querySelector("#bgcolor");
         const hoverIp = document.querySelector("#hoverColor");
+
+        const generateBtn = document.querySelector("#generateBtn");
 
 
 
@@ -68,6 +71,12 @@
 
 
 
+        generateBtn.addEventListener("click", e => {
+            grid && grid.destroy();
+        })
+
+
+
         const gridArray = [
             [0, 0, 0, 0, 1],
             [1, 1, 0, 0, 0],
@@ -77,7 +86,7 @@
         ];
 
         const container = document.querySelector("#container");
-        const grid = new Grid(gridArray, container).render();
+        grid = new Grid(gridArray, container, bgcolor, hoverColor).render();
 
 
     </script>
