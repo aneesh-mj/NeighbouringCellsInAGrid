@@ -8,12 +8,18 @@ class Grid {
         this.currentConnectedCells = [];
     }
 
+    /**
+     * set width based on the no of cells
+     */
     setWidth() {
         const w = this.array[0].length;
         this.domNode.style.width = `${w * 50 + w * 2}px`;
-
     }
 
+    /**
+     * generate the grid layout
+     * pushing the adjacent nodes to an array based on its position while iterating.
+     */
     generateGrid() {
 
         const objMap = {};
@@ -34,7 +40,6 @@ class Grid {
 
                 const topValue = grid[i - 1] && grid[i - 1][j];
                 const top_id = `cell_${i - 1}_${j}`;
-
 
                 const leftValue = grid[i][j - 1];
                 const left_id = `cell_${i}_${j - 1}`;
@@ -63,6 +68,9 @@ class Grid {
         return objMap;
     }
 
+    /**
+     * show/hide logic for count display
+     */
     showCount = (cell, count) => {
         this.container.querySelectorAll('span').forEach(s => s.style.display = 'none');
         const span = cell.querySelector('span');
@@ -70,7 +78,10 @@ class Grid {
         span.style.display = "inline";
     }
 
-
+    /**
+     * sets the current connected cells.
+     * hover background transition happens here
+     */
     onMouseOver = e => {
         if (e.target.classList.contains("filled")) {
             const id = e.target.id;
@@ -101,14 +112,19 @@ class Grid {
         }
     }
 
+    /**
+     * Attached events to the container.
+     */
     attachEvents() {
         this.container.addEventListener("mouseover", this.onMouseOver);
         this.container.addEventListener("mouseout", this.onMouseOut);
         this.container.addEventListener("click", this.onClick);
-
-
     }
 
+    /**
+     * recursive search to filter the adjascent nodes
+     * and sets as 'connectedCells' so that we can reuse. 
+     */
     setConnectedCells(id) {
 
         const getNeighbours = (obj, map) => {
@@ -126,8 +142,9 @@ class Grid {
 
     }
 
-
-
+    /**
+     * Renders the whole grid layout.
+     */
     render() {
         this.generateGrid();
         this.setWidth();
@@ -136,6 +153,10 @@ class Grid {
         return this;
     }
 
+    /**
+     * destroys the layout.
+     * cleaning up the events attached.
+     */
     destroy() {
 
         this.container.removeEventListener("mouseover", this.onMouseOver);
@@ -144,8 +165,5 @@ class Grid {
 
         this.domNode.remove();
 
-
     }
-
-
 }
