@@ -1,206 +1,72 @@
 <!DOCTYPE HTML>
-
 <html>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Your Website</title>
-
-    <style>
-        #container {
-            /* border: 1px solid #ccc; */
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .cell {
-            border: 1px solid #ccc;
-            width: 50px;
-            height: 50px;
-        }
-
-        .filled {
-            background-color: red;
-            display: flex;
-            align-items: center;
-        }
-
-        .filled.hover {
-            background-color: green;
-        }
-
-        .filled span {
-            flex: 1;
-            text-align: center;
-            pointer-events: none;
-        }
-
-        #container,
-        .cell {
-            border-collapse: collapse;
-        }
-    </style>
-
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+    <section id="avaGrid">
+        <div class="row">
+            <label for="range">Grid Size: </label>
+            <input id="range" type="range" value="5" min="4" max="10"> <output></output>
+        </div>
 
-    <div id="container"></div>
+        <div class="row">
+            <label for="bgcolor">Background Color:</label>
+            <input type="color" id="bgcolor" name="bgcolor" value="#E2251E">
+        </div>
+
+        <div class="row">
+            <label for="hoverColor">Hover Color</label>
+            <input type="color" id="hoverColor" name="hoverColor" value="#b5100a">
+        </div>
+
+        <div class="row">
+            <button>
+                Generate Grid
+            </button>
+        </div>
+
+        <div id="container"></div>
+    </section>
+
+    <script src="./Cell.js"></script>
+    <script src="./Grid.js"></script>
 
     <script>
 
-        class Cell {
-            constructor(pos, value) {
-                this.pos = pos;
-                this.id = `cell_${pos[0]}_${pos[1]}`;
-                this.value = value;
-                this.children = [];
-            }
+        let gridSize = 5;
+        let bgcolor;
+        let hoverColor;
 
-            setDOMNode() {
-                const cell = document.createElement("div");
-                cell.setAttribute("id", this.id);
-                cell.classList.add('cell');
-                if (this.value) {
-                    cell.classList.add('filled');
-                    const numContainer = document.createElement("span");
-                    this.numContainer = numContainer;
-                    cell.appendChild(numContainer);
-                }
-                this.domNode = cell;
-                return this;
-            }
-        }
+        const slider = document.querySelector("#range");
+        const o = document.querySelector('output');
+        o.innerHTML = slider.value;
 
-
-        class Grid {
-
-            constructor(arr, container) {
-                this.array = arr;
-                this.container = container;
-            }
-
-            setWidth() {
-                const w = this.array[0].length;
-                this.container.style.width = `${w * 50 + w * 2}px`;
-
-            }
-
-            generateGrid() {
-
-                const objMap = {};
-                const grid = this.array;
-
-                for (let i = 0; i < grid.length; i++) {
-                    for (let j = 0; j < grid[i].length; j++) {
-                        const id = `cell_${i}_${j}`;
-                        const value = grid[i][j];
-
-                        if (!objMap[id]) {
-                            objMap[id] = new Cell([i, j], value).setDOMNode();
-                            this.container.appendChild(objMap[id].domNode);
-                        }
-
-                        const topValue = grid[i - 1] && grid[i - 1][j];
-                        const top_id = `cell_${i - 1}_${j}`;
-
-
-                        const leftValue = grid[i][j - 1];
-                        const left_id = `cell_${i}_${j - 1}`;
-
-                        if (value) {
-                            if (topValue) {
-                                objMap[id].children.push(objMap[top_id]);
-                                objMap[top_id].children.push(objMap[id]);
-
-                            }
-
-                            if (leftValue) {
-                                objMap[left_id].children.push(objMap[id]);
-                                objMap[id].children.push(objMap[left_id]);
-
-                            }
-                        }
-
-                    }
-                }
-
-                this.objMap = objMap;
-
-                return objMap;
-            }
-
-            showCount = (cell, count) => {
-                this.container.querySelectorAll('span').forEach(s => s.style.display = 'none');
-                const span = cell.querySelector('span');
-                span.innerHTML = count;
-                span.style.display = "inline";
-            }
-
-            attachEvents() {
-
-                let connectedCells = [];
-
-                this.container.addEventListener("mouseover", (e) => {
-                    console.log(e.target);
-                    if (e.target.classList.contains("filled")) {
-                        const id = e.target.id;
-                        connectedCells = this.objMap[id].connectedCells;
-                        if (!connectedCells) {
-                            this.setConnectedCells(id);
-                        }
-                        connectedCells = this.objMap[id].connectedCells;
-                        connectedCells.map(c => {
-                            c.domNode.classList.add("hover");
-                        });
-                    }
-                });
-
-                this.container.addEventListener("mouseout", (e) => {
-                    if (connectedCells.length) {
-                        connectedCells.map(c => {
-                            c.domNode.classList.remove("hover");
-                        });
-                    }
-                });
-
-                this.container.addEventListener("click", (e) => {
-                    if (e.target.classList.contains("filled") && connectedCells.length) {
-                        this.showCount(e.target, connectedCells.length);
-                    }
-                });
-
-
-            }
-
-            setConnectedCells(id) {
-
-                const getNeighbours = (obj, map) => {
-                    if (!map[obj.id]) {
-                        map[obj.id] = obj;
-                        if (obj.children && obj.children.length) {
-                            obj.children.map(c => getNeighbours(c, map));
-                        }
-                    }
-                }
-
-                const o = {};
-                getNeighbours(this.objMap[id], o);
-                this.objMap[id].connectedCells = Object.values(o);
-
-            }
+        const bgIp = document.querySelector("#bgcolor");
+        const hoverIp = document.querySelector("#hoverColor");
 
 
 
-            render() {
-                this.generateGrid();
-                this.setWidth();
-                this.attachEvents();
+        slider.addEventListener('input', () => {
+            o.innerHTML = slider.value;
+            gridSize = slider.value;
+        }, false);
 
-                console.log(this.objMap)
-            }
 
-        }
+        bgIp.addEventListener("input", (e) => {
+            bgcolor = e.target.value;
+        }, false);
+
+
+        hoverIp.addEventListener("input", (e) => {
+            hoverColor = e.target.value;
+        }, false);
+
+
 
         const gridArray = [
             [0, 0, 0, 0, 1],
@@ -213,41 +79,6 @@
         const container = document.querySelector("#container");
         const grid = new Grid(gridArray, container).render();
 
-
-
-
-
-
-
-
-
-
-        /*
-                const objMap = generateGrid();
-                console.log(objMap);
-
-
-                const getNeighbours = (obj, map) => {
-
-                    if (!map[obj.id]) {
-                        map[obj.id] = obj;
-                        if (obj.children && obj.children.length) {
-                            obj.children.map(c => getNeighbours(c, map));
-                        }
-                    }
-                }
-
-
-
-                Object.keys(objMap).map(o => {
-                    let m = {};
-                    getNeighbours(objMap[o], m);
-                    console.log(m);
-                })
-
-                // console.log(getNeighbours());
-
-                */
 
     </script>
 </body>

@@ -1,0 +1,55 @@
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#container {
+    /* border: 1px solid #ccc; */
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cell {
+    border: 1px solid #ccc;
+    width: 50px;
+    height: 50px;
+}
+
+.filled {
+    background-color: red;
+    display: flex;
+    align-items: center;
+}
+
+.filled.hover {
+    background-color: green;
+}
+
+.filled span {
+    flex: 1;
+    text-align: center;
+    pointer-events: none;
+}
+
+#container,
+.cell {
+    border-collapse: collapse;
+}
+
+
+/**
+FORM STYLES
+*/
+
+#avaGrid {
+    margin: 100px;
+}
+
+#avaGrid .row {
+    margin-bottom: 20px;
+    display: flex;
+}
+
+#avaGrid label {
+    min-width: 200px;
+}
