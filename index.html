@@ -5,23 +5,53 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Your Website</title>
+
+    <style>
+        #container {
+            /* border: 1px solid #ccc; */
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .cell {
+            border: 1px solid #ccc;
+            width: 50px;
+            height: 50px;
+        }
+
+        .filled {
+            background-color: red;
+        }
+
+        #container,
+        .cell {
+            border-collapse: collapse;
+        }
+    </style>
+
 </head>
 
 <body>
 
+    <div id="container"></div>
 
     <script>
 
         class Cell {
-            constructor(id, value) {
-                this.id = id;
+            constructor(pos, value) {
+                this.pos = pos;
+                this.id = `cell_${pos[0]}_${pos[1]}`;
                 this.value = value;
                 this.children = [];
             }
 
             getDOMNode() {
                 const cell = document.createElement("div");
+                cell.setAttribute("id", this.id);
                 cell.classList.add('cell');
+                if (this.value) {
+                    cell.classList.add('filled');
+                }
                 return cell;
             }
         }
@@ -34,11 +64,68 @@
                 this.container = container;
             }
 
-            
+            setWidth() {
+                const w = this.array[0].length;
+                this.container.style.width = `${w * 50 + w * 2}px`;
+
+            }
+
+            generateGrid() {
+
+                const objMap = {};
+                const grid = this.array;
+
+                for (let i = 0; i < grid.length; i++) {
+                    for (let j = 0; j < grid[i].length; j++) {
+                        const id = `cell_${i}_${j}`;
+                        const value = grid[i][j];
+
+                        if (!objMap[id]) {
+                            objMap[id] = new Cell([i, j], value);
+                            this.container.appendChild(objMap[id].getDOMNode());
+                        }
+
+                        const topValue = grid[i - 1] && grid[i - 1][j];
+                        const top_id = `cell_${i - 1}_${j}`;
+
+
+                        const leftValue = grid[i][j - 1];
+                        const left_id = `cell_${i}_${j - 1}`;
+
+                        if (value) {
+                            if (topValue) {
+                                objMap[id].children.push(objMap[top_id]);
+                                objMap[top_id].children.push(objMap[id]);
+
+                            }
+
+                            if (leftValue) {
+                                objMap[left_id].children.push(objMap[id]);
+                                objMap[id].children.push(objMap[left_id]);
+
+                            }
+                        }
+
+                    }
+                }
+
+                this.objMap = objMap;
+
+                return objMap;
+            }
+
+
+
+            render() {
+                this.generateGrid();
+                this.setWidth();
+
+                console.log(this.objMap)
+            }
 
         }
 
-        const grid = [
+        const gridArray = [
             [0, 0, 0, 0, 1],
             [1, 1, 0, 0, 0],
             [1, 1, 0, 1, 1],
@@ -46,73 +133,44 @@
             [1, 1, 1, 0, 0],
         ];
 
+        const container = document.querySelector("#container");
+        const grid = new Grid(gridArray, container).render();
 
 
 
-        const generateGrid = () => {
-            const objMap = {};
-            for (let i = 0; i < grid.length; i++) {
-                for (let j = 0; j < grid[i].length; j++) {
-                    const id = `cell_${i}_${j}`;
-                    const value = grid[i][j];
-
-                    if (!objMap[id] && value) {
-                        objMap[id] = new Cell(id, value);
-                    }
-
-                    const topValue = grid[i - 1] && grid[i - 1][j];
-                    const top_id = `cell_${i - 1}_${j}`;
 
 
-                    const leftValue = grid[i][j - 1];
-                    const left_id = `cell_${i}_${j - 1}`;
 
-                    if (value) {
-                        if (topValue) {
-                            objMap[id].children.push(objMap[top_id]);
-                            objMap[top_id].children.push(objMap[id]);
 
-                        }
 
-                        if (leftValue) {
-                            objMap[left_id].children.push(objMap[id]);
-                            objMap[id].children.push(objMap[left_id]);
 
+
+        /*
+                const objMap = generateGrid();
+                console.log(objMap);
+
+
+                const getNeighbours = (obj, map) => {
+
+                    if (!map[obj.id]) {
+                        map[obj.id] = obj;
+                        if (obj.children && obj.children.length) {
+                            obj.children.map(c => getNeighbours(c, map));
                         }
                     }
-
                 }
-            }
-
-            return objMap;
-        }
 
 
 
+                Object.keys(objMap).map(o => {
+                    let m = {};
+                    getNeighbours(objMap[o], m);
+                    console.log(m);
+                })
 
-        const objMap = generateGrid();
-        console.log(objMap);
+                // console.log(getNeighbours());
 
-
-        const getNeighbours = (obj, map) => {
-
-            if (!map[obj.id]) {
-                map[obj.id] = obj;
-                if (obj.children && obj.children.length) {
-                    obj.children.map(c => getNeighbours(c, map));
-                }
-            }
-        }
-
-
-
-        Object.keys(objMap).map(o => {
-            let m = {};
-            getNeighbours(objMap[o], m);
-            console.log(m);
-        })
-
-        // console.log(getNeighbours());
+                */
 
     </script>
 </body>
