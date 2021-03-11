@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Your Website</title>
+</head>
+
+<body>
+
+
+    <script>
+
+        class Cell {
+            constructor(id, value) {
+                this.id = id;
+                this.value = value;
+                this.children = {};
+                this.childCount = 0;
+            }
+        }
+
+        const grid = [
+            [0, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0],
+            [1, 1, 0, 1, 1],
+            [0, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0],
+        ];
+
+        const objMap = {};
+
+
+        const generateGrid = () => {
+            for (let i = 0; i < grid.length; i++) {
+                for (let j = 0; j < grid[i].length; j++) {
+                    const id = `cell_${i}_${j}`;
+                    const value = grid[i][j];
+
+                    if (!objMap[id] && value) {
+                        objMap[id] = new Cell(id, value);
+                    }
+
+                    const topValue = grid[i - 1] && grid[i - 1][j];
+                    const top_id = `cell_${i - 1}_${j}`;
+
+                    const rightValue = grid[i][j + 1];
+                    const right_id = `cell_${i}_${j + 1}`;
+
+                    const bottomValue = grid[i + 1] && grid[i + 1][j];
+                    const bottom_id = `cell_${i + 1}_${j}`;
+
+                    const leftValue = grid[i][j - 1];
+                    const left_id = `cell_${i}_${j - 1}`;
+
+                    if (value) {
+                        if (topValue) {
+                            objMap[id].children.top = objMap[top_id];
+                            objMap[top_id].children.bottom = objMap[id];
+
+                            // objMap[id].childCount++;
+                            // objMap[top_id].childCount++;
+                        }
+
+                        // if(bottomValue){
+                        //     objMap[id].childCount++;
+                        // }
+
+                        if (leftValue) {
+                            objMap[left_id].children.right = objMap[id];
+                            objMap[id].children.left = objMap[left_id];
+
+                            // objMap[id].childCount++;
+                            // objMap[left_id].childCount++;
+                        }
+
+                        // if(rightValue){
+                        //     objMap[id].childCount++;
+                        // }
+                    }
+
+                }
+            }
+        }
+
+
+        generateGrid();
+
+        console.log(objMap);
+
+
+        const getNeighbours = (obj, map) => {
+
+            if (!map[obj.id]) {
+                map[obj.id] = obj;
+                if (obj.children && Object.keys(obj.children).length) {
+                    Object.keys(obj.children).map(c => getNeighbours(obj.children[c], map));
+                }
+            }
+
+        }
+
+
+
+        Object.keys(objMap).map(o => {
+            let m = {};
+            getNeighbours(objMap[o], m);
+            console.log(m);
+        })
+
+        // console.log(getNeighbours());
+
+    </script>
+</body>
+
+</html>
